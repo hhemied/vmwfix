@@ -20,6 +20,7 @@ Default = '\033[0m'
 LIB = "/usr/lib/vmware/lib/libvmwareui.so/libvmwareui.so"
 BS = "/etc/vmware/bootstrap"
 useLibs = "VMWARE_USE_SHIPPED_LIBS"
+deps = ["kernel-headers", "kernel-devel", "gcc", "dkms"]
 
 vmmon = "/usr/lib/vmware/modules/source/vmmon.tar"
 vmnet = "/usr/lib/vmware/modules/source/vmnet.tar"
@@ -27,6 +28,7 @@ vmnet = "/usr/lib/vmware/modules/source/vmnet.tar"
 """
 building md5sum function
 """
+
 
 def md5(fname):
     hash_md5 = hashlib.md5()
@@ -37,6 +39,13 @@ def md5(fname):
 
 
 """
+Installing Dependencies
+"""
+print("Installind dependencies ...")
+for pkg in deps:
+    subprocess.call("sudo dnf install -y {}", shell=True).format(pkg)
+
+"""
 checking VMWare Workstation installed or not
 """
 print("\nChecking VMWare workstation ...")
@@ -45,7 +54,6 @@ if os.path.exists(LIB):
 else:
     print(Red, " VMWare Workstation not detected, exit!", Default)
     sys.exit(1)
-    
 
 """
 Bootstrapping VMWare bundle libs
@@ -60,16 +68,17 @@ if os.path.exists(BS):
             file.write("export VMWARE_USE_SHIPPED_LIBS=force")
 
 
-
 "Manipulating FS to build its structure"
 mylibs = subprocess.check_output("rpm -ql glib2|grep '/usr/lib64/libg.*so\.0$'", shell=True)
+
 for mylib in mylibs.split():
-    tgtlib = os.path.join("/usr/lib/vmware/lib/", os.path.basename(mylib.decode("utf-8")), os.path.basename(mylib.decode("utf-8")))
+    tgtlib = os.path.join("/usr/lib/vmware/lib/", os.path.basename(mylib.decode("utf-8")),
+                          os.path.basename(mylib.decode("utf-8")))
     if not os.path.exists(tgtlib + ".back"):
         copyfile(tgtlib, tgtlib + ".backup")
     print("Manipulating {} ....".format(tgtlib))
     copyfile(mylib.decode("utf-8"), tgtlib)
-    
+
 
 print("Fixing Networking issue ...")
 
@@ -78,7 +87,6 @@ if md5(vmmon) != md5("vmmon.tar"):
 if md5(vmnet) != md5("vmnet.tar"):
     copyfile("./vmnet.tar", vmnet)
 
+subprocess.call("sudo vmware-modconfig --console --install-all", shell=True)
 
 print(Green, "Enjoy VMWare WorkStation", Default)
-        
-        
