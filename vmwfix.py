@@ -12,7 +12,6 @@ import subprocess
 from shutil import copyfile
 import hashlib
 
-
 Red = '\033[91m'
 Green = '\033[92m'
 Default = '\033[0m'
@@ -20,7 +19,7 @@ Default = '\033[0m'
 LIB = "/usr/lib/vmware/lib/libvmwareui.so/libvmwareui.so"
 BS = "/etc/vmware/bootstrap"
 useLibs = "VMWARE_USE_SHIPPED_LIBS"
-deps = ["kernel-headers", "kernel-devel", "gcc", "dkms"]
+deps = ["kernel-headers", "kernel-devel", "gcc", "dkms", "glibc-headers"]
 
 vmmon = "/usr/lib/vmware/modules/source/vmmon.tar"
 vmnet = "/usr/lib/vmware/modules/source/vmnet.tar"
@@ -37,13 +36,12 @@ def md5(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-
 """
 Installing Dependencies
 """
-print("Installind dependencies ...")
+print(Green, "\nInstalling dependencies ...\n", Default)
 for pkg in deps:
-    subprocess.call("sudo dnf install -y {}", shell=True).format(pkg)
+    os.system("sudo dnf install -y {}".format(pkg))
 
 """
 checking VMWare Workstation installed or not
@@ -67,26 +65,28 @@ if os.path.exists(BS):
         with open(BS, 'a') as file:
             file.write("export VMWARE_USE_SHIPPED_LIBS=force")
 
+print(Green, "\nRebuilding VMWare Modules ...\n", Default)
+subprocess.call("sudo vmware-modconfig --console --install-all", shell=True)
 
 "Manipulating FS to build its structure"
 mylibs = subprocess.check_output("rpm -ql glib2|grep '/usr/lib64/libg.*so\.0$'", shell=True)
 
 for mylib in mylibs.split():
-    tgtlib = os.path.join("/usr/lib/vmware/lib/", os.path.basename(mylib.decode("utf-8")),
-                          os.path.basename(mylib.decode("utf-8")))
+    tgtlib = os.path.join("/usr/lib/vmware/lib/", os.path.basename(mylib.decode("utf-8")), os.path.basename(mylib.decode("utf-8")))
     if not os.path.exists(tgtlib + ".back"):
         copyfile(tgtlib, tgtlib + ".backup")
     print("Manipulating {} ....".format(tgtlib))
+    # coping files
     copyfile(mylib.decode("utf-8"), tgtlib)
 
-
-print("Fixing Networking issue ...")
+print()
+print(Green, "Fixing Networking issue ...", Default)
 
 if md5(vmmon) != md5("vmmon.tar"):
     copyfile("./vmmon.tar", vmmon)
 if md5(vmnet) != md5("vmnet.tar"):
     copyfile("./vmnet.tar", vmnet)
 
-subprocess.call("sudo vmware-modconfig --console --install-all", shell=True)
-
-print(Green, "Enjoy VMWare WorkStation", Default)
+print(Green, "\nEnjoy VMWare WorkStation", Default)
+print(Green, "> Questions are welcome", Default)
+print(Green, "> hazem.hemied@gmail.com", Default)
