@@ -88,5 +88,3 @@ if md5(vmnet) != md5("vmnet.tar"):
     copyfile("./vmnet.tar", vmnet)
 
 print(Green, "\nEnjoy VMWare WorkStation", Default)
-print(Green, "> Questions are welcome", Default)
-print(Green, "> hazem.hemied@gmail.com", Default)
