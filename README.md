@@ -11,13 +11,13 @@ kernel</p>
 # Usage
 > Use these steps to download and use `vmwfix` tool
 ```
-git clone https://github.com/hhemied/vmwfix
-cd vmwfix
-sudo python3.5 vmwfix.py
+1 - sudo dnf install python3 -y
+2 - git clone https://github.com/hhemied/vmwfix
+3 - cd vmwfix
+4 - sudo python3.5 vmwfix.py
 
 ```
->## Notes:
-```
-Code is under python3
+<h3> Notes:</h3>
+
+Code is using python3
 please be sure you have python3 installed
-```
