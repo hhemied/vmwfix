@@ -17,7 +17,7 @@ kernel</p>
 4 - sudo python3.5 vmwfix.py
 
 ```
-<h3> Notes:</h3>
+## Notes:s
 
 Code is using python3
 please be sure you have python3 installed
