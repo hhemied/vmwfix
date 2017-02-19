@@ -19,5 +19,5 @@ kernel</p>
 
 ## Notes:
 
-Code is using python3
-please be sure you have python3 installed
+* Code is using python3
+* please be sure you have python3 installed
