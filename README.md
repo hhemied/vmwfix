@@ -15,9 +15,9 @@ kernel</p>
 2 - git clone https://github.com/hhemied/vmwfix
 3 - cd vmwfix
 4 - sudo python3.5 vmwfix.py
-
 ```
-## Notes:s
+
+## Notes:
 
 Code is using python3
 please be sure you have python3 installed
